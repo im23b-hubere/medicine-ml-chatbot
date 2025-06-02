@@ -6,7 +6,7 @@ from torch.utils.data import DataLoader
 # === Parameter ===
 DATA_PATH = "medquad_full.json"           # Pfad zu deiner JSON-Datei
 MODEL_NAME = "all-MiniLM-L6-v2"           # Pretrained Modell
-OUTPUT_PATH = "medizin-embeddings-finetuned"  # Speicherort für das neue Modell
+OUTPUT_PATH = "output/finetuned-st-medquad"  # Speicherort für das neue Modell
 BATCH_SIZE = 16
 EPOCHS = 2                                # Erhöhe für längeres Training
 
@@ -14,26 +14,21 @@ EPOCHS = 2                                # Erhöhe für längeres Training
 with open(DATA_PATH, 'r', encoding='utf-8') as f:
     data = json.load(f)
 
-questions = [item['question'] for item in data]
-
 # === 2. Trainingspaare generieren ===
 train_examples = []
 
-# Positive Paare: Frage mit sich selbst
-for q in questions:
-    train_examples.append(InputExample(texts=[q, q], label=1.0))
+# Positive Paare: Frage und zugehörige Antwort
+for item in data:
+    if item.get("question") and item.get("answer"):
+        train_examples.append(InputExample(texts=[item["question"], item["answer"]], label=1.0))
 
-# Negative Paare: Frage mit zufälliger anderer Frage
-for i in range(len(questions)):
-    q1 = questions[i]
-    q2 = random.choice(questions)
-    if q1 != q2:
-        train_examples.append(InputExample(texts=[q1, q2], label=0.0))
-
-# Optional: Mehr negative Paare für bessere Balance
-for _ in range(len(questions)):
-    q1, q2 = random.sample(questions, 2)
-    train_examples.append(InputExample(texts=[q1, q2], label=0.0))
+# Negative Paare: Frage und zufällige, nicht zugehörige Antwort
+for item in data:
+    if item.get("question"):
+        wrong = random.choice(data)
+        while wrong["answer"] == item["answer"]:
+            wrong = random.choice(data)
+        train_examples.append(InputExample(texts=[item["question"], wrong["answer"]], label=0.0))
 
 print(f"Trainingsbeispiele: {len(train_examples)}")
 
@@ -54,4 +49,6 @@ model.fit(
 
 # === 6. Modell speichern ===
 model.save(OUTPUT_PATH)
-print(f"Fine-tuned Modell gespeichert unter: {OUTPUT_PATH}") 
+print(f"Fine-tuned Modell gespeichert unter: {OUTPUT_PATH}")
+
+print("\n\033[92mHinweis:\033[0m\nUm das Modell in web_terminal_chat.py zu verwenden, ersetze die Zeile\n  model = SentenceTransformer('all-MiniLM-L6-v2')\ndurch\n  model = SentenceTransformer('output/finetuned-st-medquad')\n") 
