@@ -1,4 +1,4 @@
-from web_terminal_chat import app
+from web_terminal_chat_light import app
 
 # Vercel benötigt diese Datei für das Deployment
-# Die Hauptlogik ist in web_terminal_chat.py
+# Die Hauptlogik ist in web_terminal_chat_light.py
