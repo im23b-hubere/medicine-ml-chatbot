@@ -2,124 +2,393 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>MedQA Terminal Chatbot</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medicine ML Chatbot - Demo</title>
     <style>
-        body {
-            background: #181818;
-            color: #e0e0e0;
-            font-family: 'Fira Mono', 'Consolas', monospace;
+        * {
             margin: 0;
             padding: 0;
+            box-sizing: border-box;
         }
+
+        body {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            color: #2c3e50;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
         .container {
-            display: flex;
-            height: 100vh;
-        }
-        .chat {
-            flex: 2;
-            border-right: 2px solid #333;
-            padding: 32px 24px 24px 24px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
         }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 25px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e9ecef;
+        }
+
+        .header h1 {
+            color: #2c3e50;
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .header p {
+            color: #6c757d;
+            font-size: 1rem;
+            font-weight: 400;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+            flex: 1;
+        }
+
+        .chat-section {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e9ecef;
+            display: flex;
+            flex-direction: column;
+        }
+
         .chat-history {
             flex: 1;
             overflow-y: auto;
-            margin-bottom: 16px;
+            margin-bottom: 20px;
+            padding-right: 10px;
+            max-height: 500px;
         }
+
+        .chat-history::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .chat-history::-webkit-scrollbar-track {
+            background: #f8f9fa;
+            border-radius: 3px;
+        }
+
+        .chat-history::-webkit-scrollbar-thumb {
+            background: #6c757d;
+            border-radius: 3px;
+        }
+
         .chat-entry {
-            margin-bottom: 18px;
+            margin-bottom: 20px;
+            padding: 18px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #007bff;
+            animation: fadeIn 0.3s ease-in;
         }
-        .user {
-            color: #8be9fd;
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .bot {
-            color: #50fa7b;
+
+        .user-question {
+            color: #2c3e50;
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 1rem;
         }
-        .confidence {
-            color: #ffb86c;
-            font-size: 0.95em;
+
+        .bot-answer {
+            color: #495057;
+            line-height: 1.6;
+            margin-bottom: 8px;
+            font-size: 0.95rem;
         }
-        .matched-q {
-            color: #bfbfbf;
-            font-size: 0.92em;
-            margin-left: 12px;
+
+        .confidence-score {
+            color: #6c757d;
+            font-size: 0.85rem;
+            font-weight: 500;
+            background: #e9ecef;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
         }
+
+        .matched-question {
+            color: #6c757d;
+            font-size: 0.8rem;
+            font-style: italic;
+            margin-top: 8px;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            border: 1px solid #e9ecef;
+        }
+
         .input-form {
             display: flex;
-            gap: 8px;
+            gap: 12px;
+            align-items: center;
         }
+
         .input-form input[type="text"] {
             flex: 1;
-            background: #222;
-            color: #e0e0e0;
-            border: 1px solid #444;
-            border-radius: 4px;
-            padding: 8px 12px;
-            font-size: 1em;
+            background: #ffffff;
+            color: #2c3e50;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            padding: 12px 16px;
+            font-size: 0.95rem;
+            transition: all 0.2s ease;
         }
-        .input-form button {
-            background: #444;
-            color: #fff;
+
+        .input-form input[type="text"]:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+        }
+
+        .input-form input[type="text"]::placeholder {
+            color: #adb5bd;
+        }
+
+        .send-btn {
+            background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+            color: #ffffff;
             border: none;
-            border-radius: 4px;
-            padding: 8px 18px;
-            font-family: inherit;
-            font-size: 1em;
+            border-radius: 8px;
+            padding: 12px 20px;
+            font-weight: 600;
+            font-size: 0.95rem;
             cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 80px;
         }
-        .input-form button:hover {
-            background: #666;
+
+        .send-btn:hover {
+            background: linear-gradient(135deg, #0056b3 0%, #004085 100%);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
         }
-        .info {
-            flex: 1;
-            padding: 32px 24px 24px 24px;
-            background: #1a1a1a;
+
+        .send-btn:active {
+            transform: translateY(0);
         }
-        .info h2 {
-            color: #ff79c6;
-            font-size: 1.2em;
-            margin-top: 0;
+
+        .info-section {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e9ecef;
         }
-        .info pre {
-            background: #222;
-            color: #e0e0e0;
-            padding: 12px;
+
+        .info-section h2 {
+            color: #2c3e50;
+            font-size: 1.3rem;
+            margin-bottom: 18px;
+            font-weight: 600;
+        }
+
+        .tech-stack {
+            margin-bottom: 20px;
+        }
+
+        .tech-item {
+            background: #f8f9fa;
+            color: #495057;
+            padding: 8px 12px;
             border-radius: 6px;
-            font-size: 0.98em;
-            overflow-x: auto;
+            margin: 6px 0;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border: 1px solid #e9ecef;
+        }
+
+        .disclaimer {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+
+        .disclaimer h3 {
+            color: #856404;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .disclaimer p {
+            color: #856404;
+            font-size: 0.85rem;
+            line-height: 1.5;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .input-form {
+                flex-direction: column;
+            }
+
+            .send-btn {
+                width: 100%;
+            }
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+        }
+
+        .empty-state h3 {
+            color: #2c3e50;
+            margin-bottom: 12px;
+            font-weight: 600;
+        }
+
+        .example-questions {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 18px;
+            margin-top: 20px;
+        }
+
+        .example-questions h4 {
+            color: #2c3e50;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .example-questions ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .example-questions li {
+            color: #495057;
+            font-size: 0.85rem;
+            margin: 6px 0;
+            padding: 4px 0;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .example-questions li:last-child {
+            border-bottom: none;
+        }
+
+        /* Medical icons */
+        .medical-icon {
+            color: #007bff;
+            margin-right: 8px;
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="chat">
-        <div class="chat-history">
-            {% for user, bot, conf, matched_q in chat_history %}
-                <div class="chat-entry">
-                    <span class="user">You:</span> {{ user }}<br>
-                    <span class="bot">Bot:</span> {{ bot }} <span class="confidence">(similarity: {{ '%.2f'|format(conf) }})</span><br>
-                    <span class="matched-q">Matched Q: {{ matched_q }}</span>
-                </div>
-            {% else %}
-                <div class="chat-entry bot">Type your medical question below.</div>
-            {% endfor %}
+    <div class="container">
+        <div class="header">
+            <h1>🏥 Medical AI Assistant</h1>
+            <p>Semantic Search for Medical Questions - Professional Demo</p>
         </div>
-        <form class="input-form" action="/chat" method="post" autocomplete="off">
-            <input type="text" name="user_input" placeholder="Ask a medical question..." required autofocus>
-            <button type="submit">Send</button>
-        </form>
-    </div>
-    <div class="info">
-        <h2>Info</h2>
-        <pre>
-Model: SentenceTransformer (all-MiniLM-L6-v2)
-Retrieval: Cosine Similarity
-Data: medquad_full.json
 
-Disclaimer: This is a demo. For real medical advice, consult a professional.
-        </pre>
+        <div class="main-content">
+            <div class="chat-section">
+                <div class="chat-history">
+                    {% if chat_history %}
+                        {% for user, bot, conf, matched_q in chat_history %}
+                            <div class="chat-entry">
+                                <div class="user-question">👤 {{ user }}</div>
+                                <div class="bot-answer">🤖 {{ bot }}</div>
+                                <div class="confidence-score">Confidence: {{ '%.2f'|format(conf) }}</div>
+                                <div class="matched-question">Matched: {{ matched_q }}</div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="empty-state">
+                            <h3>Welcome to Medical AI Assistant</h3>
+                            <p>Ask a medical question and receive evidence-based information.</p>
+                            
+                            <div class="example-questions">
+                                <h4>💡 Example Questions:</h4>
+                                <ul>
+                                    <li>• What are the symptoms of diabetes?</li>
+                                    <li>• How to treat high blood pressure?</li>
+                                    <li>• What causes chest pain?</li>
+                                    <li>• Side effects of antibiotics</li>
+                                    <li>• How to prevent heart disease?</li>
+                                </ul>
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+
+                <form class="input-form" action="/chat" method="post" autocomplete="off">
+                    <input type="text" name="user_input" placeholder="Enter your medical question..." required autofocus>
+                    <button type="submit" class="send-btn">Send</button>
+                </form>
+            </div>
+
+            <div class="info-section">
+                <h2>🔬 Technology</h2>
+                <div class="tech-stack">
+                    <div class="tech-item">FastAPI Backend</div>
+                    <div class="tech-item">SentenceTransformers</div>
+                    <div class="tech-item">Semantic Search</div>
+                    <div class="tech-item">MedQuad Dataset</div>
+                    <div class="tech-item">Cosine Similarity</div>
+                </div>
+
+                <div class="disclaimer">
+                    <h3>⚠️ Medical Disclaimer</h3>
+                    <p>This is a demonstration system for educational purposes. For medical advice, please consult a qualified healthcare professional.</p>
+                </div>
+            </div>
+        </div>
     </div>
-</div>
+
+    <script>
+        // Auto-scroll to bottom of chat history
+        const chatHistory = document.querySelector('.chat-history');
+        if (chatHistory) {
+            chatHistory.scrollTop = chatHistory.scrollHeight;
+        }
+
+        // Form submission feedback
+        const form = document.querySelector('.input-form');
+        const sendBtn = document.querySelector('.send-btn');
+        
+        form.addEventListener('submit', function() {
+            sendBtn.textContent = 'Sending...';
+            sendBtn.disabled = true;
+        });
+    </script>
 </body>
 </html> 

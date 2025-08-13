@@ -1,0 +1,20 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "web_terminal_chat.py",
+      "use": "@vercel/python"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "web_terminal_chat.py"
+    }
+  ],
+  "functions": {
+    "web_terminal_chat.py": {
+      "maxDuration": 30
+    }
+  }
+}
