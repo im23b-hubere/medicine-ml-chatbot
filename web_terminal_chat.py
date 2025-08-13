@@ -42,11 +42,11 @@ def load_model_and_data():
     try:
         logger.info("Loading model and data...")
         
-        # Try to load full dataset first for best accuracy, then fallback to smaller ones
+        # Try to load tiny dataset first (for Vercel), then larger ones
         data_paths = [
-            os.path.join(BASE_DIR, 'medquad_full.json'),
+            os.path.join(BASE_DIR, 'medquad_tiny.json'),
             os.path.join(BASE_DIR, 'medquad_small.json'),
-            os.path.join(BASE_DIR, 'medquad_tiny.json')
+            os.path.join(BASE_DIR, 'medquad_full.json')
         ]
         
         data_path = None
