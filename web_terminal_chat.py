@@ -42,7 +42,7 @@ def load_model_and_data():
     try:
         logger.info("Loading model and data...")
         
-        # Try to load tiny dataset first (for Vercel), then larger ones
+        # Try to load tiny dataset first (for Render memory constraints), then larger ones
         data_paths = [
             os.path.join(BASE_DIR, 'medquad_tiny.json'),
             os.path.join(BASE_DIR, 'medquad_small.json'),
@@ -65,13 +65,9 @@ def load_model_and_data():
         questions = [item['question'] for item in faq_data]
         answers = [item['answer'] for item in faq_data]
         
-        # Load model - try HF Hub first, then local
-        try:
-            model = SentenceTransformer('erichuber/finetuned-medical-model')
-            logger.info("Loaded fine-tuned model from Hugging Face Hub")
-        except:
-            model = SentenceTransformer('all-MiniLM-L6-v2')
-            logger.info("Loaded standard model (fine-tuned not available)")
+        # Load model - use standard model for Render (memory constraints)
+        model = SentenceTransformer('all-MiniLM-L6-v2')
+        logger.info("Loaded standard model for Render deployment")
         question_embeddings = model.encode(questions, show_progress_bar=False, convert_to_numpy=True)
         
         logger.info(f"Loaded {len(questions)} questions and answers from {os.path.basename(data_path)}")
