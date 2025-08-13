@@ -42,8 +42,11 @@ def load_model_and_data():
     try:
         logger.info("Loading model and data...")
         
-        # Load data
-        data_path = os.path.join(BASE_DIR, 'medquad_full.json')
+        # Try to load smaller dataset first (for Vercel), fallback to full dataset
+        data_path = os.path.join(BASE_DIR, 'medquad_small.json')
+        if not os.path.exists(data_path):
+            data_path = os.path.join(BASE_DIR, 'medquad_full.json')
+        
         with open(data_path, 'r', encoding='utf-8') as f:
             faq_data = json.load(f)
         
@@ -54,7 +57,7 @@ def load_model_and_data():
         model = SentenceTransformer('all-MiniLM-L6-v2')
         question_embeddings = model.encode(questions, show_progress_bar=False, convert_to_numpy=True)
         
-        logger.info(f"Loaded {len(questions)} questions and answers")
+        logger.info(f"Loaded {len(questions)} questions and answers from {os.path.basename(data_path)}")
         return True
         
     except Exception as e:

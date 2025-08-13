@@ -143,3 +143,6 @@ Thumbs.db
 output/
 *.pkl
 *.joblib
+
+# Large dataset files (for Vercel deployment)
+medquad_full.json
