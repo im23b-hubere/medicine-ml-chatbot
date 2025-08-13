@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: medical-chatbot
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python web_terminal_chat.py
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.9
+    healthCheckPath: /health
+    disk:
+      name: model-storage
+      mountPath: /opt/render/project/src/output
+      sizeGB: 1

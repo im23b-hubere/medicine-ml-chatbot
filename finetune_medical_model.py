@@ -4,11 +4,11 @@ from sentence_transformers import SentenceTransformer, InputExample, losses
 from torch.utils.data import DataLoader
 
 # === Parameter ===
-DATA_PATH = "medquad_full.json"           # Pfad zu deiner JSON-Datei
+DATA_PATH = "medquad_small.json"          # Pfad zu deiner JSON-Datei (kleinere Version)
 MODEL_NAME = "all-MiniLM-L6-v2"           # Pretrained Modell
 OUTPUT_PATH = "output/finetuned-st-medquad"  # Speicherort für das neue Modell
-BATCH_SIZE = 16
-EPOCHS = 2                                # Erhöhe für längeres Training
+BATCH_SIZE = 32                           # Größerer Batch für schnellere Verarbeitung
+EPOCHS = 1                                # Reduziert für schnelleres Training
 
 # === 1. Daten laden ===
 with open(DATA_PATH, 'r', encoding='utf-8') as f:
