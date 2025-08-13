@@ -2,14 +2,14 @@
   "version": 2,
   "builds": [
     {
-      "src": "web_terminal_chat.py",
+      "src": "web_terminal_chat_simple.py",
       "use": "@vercel/python"
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "web_terminal_chat.py"
+      "dest": "web_terminal_chat_simple.py"
     }
   ]
 }
