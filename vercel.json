@@ -2,14 +2,22 @@
   "version": 2,
   "builds": [
     {
-      "src": "web_terminal_chat_simple.py",
-      "use": "@vercel/python"
+      "src": "web_terminal_chat.py",
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "50mb"
+      }
     }
   ],
   "routes": [
     {
       "src": "/(.*)",
-      "dest": "web_terminal_chat_simple.py"
+      "dest": "web_terminal_chat.py"
     }
-  ]
+  ],
+  "functions": {
+    "web_terminal_chat.py": {
+      "maxDuration": 60
+    }
+  }
 }

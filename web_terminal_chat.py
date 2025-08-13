@@ -42,10 +42,22 @@ def load_model_and_data():
     try:
         logger.info("Loading model and data...")
         
-        # Try to load smaller dataset first (for Vercel), fallback to full dataset
-        data_path = os.path.join(BASE_DIR, 'medquad_small.json')
-        if not os.path.exists(data_path):
-            data_path = os.path.join(BASE_DIR, 'medquad_full.json')
+        # Try to load tiny dataset first (for Vercel), then small, then full
+        data_paths = [
+            os.path.join(BASE_DIR, 'medquad_tiny.json'),
+            os.path.join(BASE_DIR, 'medquad_small.json'),
+            os.path.join(BASE_DIR, 'medquad_full.json')
+        ]
+        
+        data_path = None
+        for path in data_paths:
+            if os.path.exists(path):
+                data_path = path
+                break
+        
+        if not data_path:
+            logger.error("No dataset found")
+            return False
         
         with open(data_path, 'r', encoding='utf-8') as f:
             faq_data = json.load(f)

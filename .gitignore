@@ -146,3 +146,4 @@ output/
 
 # Large dataset files (for Vercel deployment)
 medquad_full.json
+medquad_small.json
