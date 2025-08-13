@@ -11,10 +11,5 @@
       "src": "/(.*)",
       "dest": "web_terminal_chat.py"
     }
-  ],
-  "functions": {
-    "web_terminal_chat.py": {
-      "maxDuration": 30
-    }
-  }
+  ]
 }
